@@ -17,7 +17,7 @@ class EventController extends Controller
     {
         return Event::all();
     }
-
+    
     /**
      * Store a newly created resource in storage.
      *
@@ -55,21 +55,21 @@ class EventController extends Controller
         return $event;
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
-        
         $event=Event::find($id);
-        $eventOwner = user::where('id','=',$event->user_id)->first()->toArray();
-        $return = (object) [
-            'event' => $event,
-            'eventOwner' => $eventOwner,
-        ];
+        if($event){
+            $eventOwner = user::where('id','=',$event->user_id)->first()->toArray();
+            $return = (object)[];
+            $return = (object) [
+                'event' => $event,
+                'eventOwner' => $eventOwner,
+            ];
+        }else{
+            $return = (object) [
+                'message' => "event not found",
+            ];
+        }
         
         return $return;
     }
@@ -79,28 +79,36 @@ class EventController extends Controller
         return Event::where('title','like','%'.$title.'%')->get();
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function update(Request $request, $id)
     {
         $event = Event::find($id);
         $event->update($request->all());
         return $event;
     }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    
     public function destroy($id)
     {
-        return Event::destroy($id);
+        $user = auth()->user();
+        $event= Event::findOrFail($id);
+        $message = "";
+        if($user->id==$event->user_id){
+            $event->delete();
+            $message = "Event deleted";
+        }else{
+            $message = "You can't delete this Event. You are not the owner of this event!";
+        }
+        $return = (object) [
+            'message' => $message
+        ];
+        return $return;
+
+    }
+
+    public function dashboard(){
+        $user = auth()->user();
+        $events = $user->events;
+        
+        return $events;
     }
 }

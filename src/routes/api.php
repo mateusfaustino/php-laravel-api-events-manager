@@ -26,4 +26,5 @@ Route::group(['middleware'=>['auth:sanctum']], function () {
     Route::put('/events/{id}', [EventController::class, 'update']);
     Route::delete('/events/{id}', [EventController::class, 'destroy']);
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/dashboard', [EventController::class, 'dashboard']);
 });
