@@ -18,4 +18,8 @@ class Event extends Model
         'city',
         'description'
     ];
+
+    public function user(){
+        return $this->belongsTo('App\Models\User');
+    }
 }

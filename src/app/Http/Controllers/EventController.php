@@ -25,6 +25,7 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
+        $user = auth()->user();
         $request->validate([
             'title'=>'required',
             'city'=>'required',
@@ -38,6 +39,7 @@ class EventController extends Controller
         $event->city = $request->city;
         $event->private = $request->private;
         $event->items = $request->items;
+        $event->user_id = $user->id;
         
         if($request->hasFile('image') && $request->file('image')->isValid()){
             $requestImage = $request->image;
@@ -46,6 +48,8 @@ class EventController extends Controller
         }else{
             $event->image = 'null';
         }
+
+        
         $event->save();
         return $event;
     }
