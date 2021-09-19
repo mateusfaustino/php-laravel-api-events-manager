@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Event;
+use App\Models\User;
 
 class EventController extends Controller
 {
@@ -62,7 +63,15 @@ class EventController extends Controller
      */
     public function show($id)
     {
-        return Event::find($id);
+        
+        $event=Event::find($id);
+        $eventOwner = user::where('id','=',$event->user_id)->first()->toArray();
+        $return = (object) [
+            'event' => $event,
+            'eventOwner' => $eventOwner,
+        ];
+        
+        return $return;
     }
 
     public function search($title)
