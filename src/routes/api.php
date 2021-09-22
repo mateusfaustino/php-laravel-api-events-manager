@@ -24,6 +24,7 @@ Route::get('/events/search/{title}', [EventController::class, 'search']);
 Route::group(['middleware'=>['auth:sanctum']], function () {
     Route::post('/events', [EventController::class, 'store']);
     Route::put('/events/{id}', [EventController::class, 'update']);
+    Route::get('/events/{id}/edit', [EventController::class, 'edit']);
     Route::delete('/events/{id}', [EventController::class, 'destroy']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/dashboard', [EventController::class, 'dashboard']);

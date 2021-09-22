@@ -52,12 +52,14 @@ class EventController extends Controller
 
         
         $event->save();
-        return $event;
+        return response(['event'=>$event], 201);
+        
     }
 
     public function show($id)
     {
         $event=Event::find($id);
+        $http_code = 200;
         if($event){
             $eventOwner = user::where('id','=',$event->user_id)->first()->toArray();
             $return = (object)[];
@@ -69,22 +71,46 @@ class EventController extends Controller
             $return = (object) [
                 'message' => "event not found",
             ];
+            $http_code = 404;
         }
-        
-        return $return;
+        return response(['data'=>$return], $http_code);
     }
 
     public function search($title)
     {
-        return Event::where('title','like','%'.$title.'%')->get();
+        $data = Event::where('title','like','%'.$title.'%')->get(); 
+        return response(['data'=>$data], 200);
     }
 
 
     public function update(Request $request, $id)
     {
         $event = Event::find($id);
-        $event->update($request->all());
-        return $event;
+        $user = auth()->user();
+        $event= Event::findOrFail($id);
+        $return = (object)[];
+        if($event && $user->id==$event->user_id){
+            $event->update($request->all());
+            $return->message = "Event updated with success";
+            $return->event = $event;
+            
+        }else{
+            $return->message = "You can not upadate this Event. You are not the owner of this event!";
+        }
+        return $return;
+    }
+    public function edit(Request $request, $id)
+    {
+        $event = Event::findOrFail($id);
+        $user = auth()->user();
+        $return = (object)[];
+        if($event && $user->id==$event->user_id){
+            $return->message = "event for update";
+            $return->event = $event;
+        }else{
+            $return->message = "You can not edit this Event or this event does not exist";
+        }
+        return $return;
     }
     
     public function destroy($id)
