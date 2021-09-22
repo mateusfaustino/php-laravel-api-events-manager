@@ -19,7 +19,7 @@
         - name: Setup PHP
           uses: shivammathur/setup-php@v2
           with:
-            php-version: '7.3'
+            php-version: '7.4'
             
         - name: Check if composer.json exists
           id: check_files
@@ -56,5 +56,5 @@
           with:
             app-name: 'eventsmenager'
             slot-name: 'production'
-            publish-profile: ${{ secrets.AzureAppService_PublishProfile_b65a1400b1354c7595eb15070d9b069f }}
+            publish-profile: ${{ secrets.AzureAppService_PublishProfile_e4484b24bfe5479bbcd7e3a502270a06 }}
             package: .
